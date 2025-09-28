@@ -1,2 +1,1 @@
-CREATE SCHEMA IF NOT EXIS
-TS mainkoinserver;
+CREATE SCHEMA IF NOT EXISTS mainkoinserver;
