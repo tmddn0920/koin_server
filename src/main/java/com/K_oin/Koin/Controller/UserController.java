@@ -90,4 +90,18 @@ public class UserController {
 
         return ResponseEntity.ok(new ApiResponse<>(!exists, value, message));
     }
+
+    @PostMapping("/UpdateProfile")
+    public ResponseEntity<ApiResponse<UserDTO>> updateProfile(@RequestBody UserDTO userDTO, Authentication authentication){
+
+        try {
+                userService.updateProfile(userDTO, authentication.getName());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, userDTO, e.getMessage()));
+        }
+
+        String message = "성공적으로" + authentication.getName() + "업데이트 하였습니다.";
+        return ResponseEntity.ok(new ApiResponse<>(true, userDTO, message));
+    }
 }

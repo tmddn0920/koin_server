@@ -20,7 +20,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-        setFilterProcessesUrl("/txn/user/login"); // 로그인 엔드포인트 지정
+        setFilterProcessesUrl("/management/user/login"); // 로그인 엔드포인트 지정
     }
 
     @Override
