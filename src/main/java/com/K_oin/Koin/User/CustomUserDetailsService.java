@@ -1,6 +1,6 @@
 package com.K_oin.Koin.User;
 
-import com.K_oin.Koin.Repository.UserRepository;
+import com.K_oin.Koin.Repository.userRepository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

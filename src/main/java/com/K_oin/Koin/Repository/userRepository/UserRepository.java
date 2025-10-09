@@ -1,6 +1,6 @@
-package com.K_oin.Koin.Repository;
+package com.K_oin.Koin.Repository.userRepository;
 
-import com.K_oin.Koin.Entitiy.User;
+import com.K_oin.Koin.Entitiy.UserEntity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

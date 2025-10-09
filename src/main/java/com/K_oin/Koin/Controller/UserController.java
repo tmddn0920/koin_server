@@ -1,15 +1,14 @@
 package com.K_oin.Koin.Controller;
 
 import com.K_oin.Koin.DTO.ApiResponse;
-import com.K_oin.Koin.DTO.UserDTO;
-import com.K_oin.Koin.Entitiy.User;
-import com.K_oin.Koin.Service.UserService;
+import com.K_oin.Koin.DTO.userDTOs.UserDTO;
+import com.K_oin.Koin.Entitiy.UserEntity.User;
+import com.K_oin.Koin.Service.userServices.UserService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -65,7 +64,9 @@ public class UserController {
 
     @GetMapping("/RegisterValidation")
     public ResponseEntity<ApiResponse<String>> checkField(
+            @Parameter(description = "검사할 필드 타입 (username, nickname, email 중 하나)", example = "username", required = true)
             @RequestParam String type,
+            @Parameter(description = "검사할 값 (아이디, 닉네임, 이메일)", example = "user123", required = true)
             @RequestParam String value) {
 
         boolean exists;
@@ -95,7 +96,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserDTO>> updateProfile(@RequestBody UserDTO userDTO, Authentication authentication){
 
         try {
-                userService.updateProfile(userDTO, authentication.getName());
+            userService.updateProfile(userDTO, authentication.getName());
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse<>(false, userDTO, e.getMessage()));

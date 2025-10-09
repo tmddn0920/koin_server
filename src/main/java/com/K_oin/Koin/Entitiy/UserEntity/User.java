@@ -1,4 +1,4 @@
-package com.K_oin.Koin.Entitiy;
+package com.K_oin.Koin.Entitiy.UserEntity;
 
 import com.K_oin.Koin.EnumData.Nationality;
 import com.K_oin.Koin.EnumData.Role;

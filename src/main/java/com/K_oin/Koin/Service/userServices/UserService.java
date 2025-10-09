@@ -1,10 +1,10 @@
-package com.K_oin.Koin.Service;
+package com.K_oin.Koin.Service.userServices;
 
-import com.K_oin.Koin.DTO.UserDTO;
-import com.K_oin.Koin.Entitiy.User;
+import com.K_oin.Koin.DTO.userDTOs.UserDTO;
+import com.K_oin.Koin.Entitiy.UserEntity.User;
 import com.K_oin.Koin.EnumData.Nationality;
 import com.K_oin.Koin.EnumData.Role;
-import com.K_oin.Koin.Repository.UserRepository;
+import com.K_oin.Koin.Repository.userRepository.UserRepository;
 import com.K_oin.Koin.Security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
