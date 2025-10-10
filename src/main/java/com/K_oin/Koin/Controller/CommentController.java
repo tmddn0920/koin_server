@@ -1,7 +1,10 @@
 package com.K_oin.Koin.Controller;
 
 import com.K_oin.Koin.DTO.ApiResponse;
+import com.K_oin.Koin.DTO.commentDTOs.CommentDTO;
 import com.K_oin.Koin.DTO.commentDTOs.CommentDetailDTO;
+import com.K_oin.Koin.DTO.commentDTOs.ReplyCommentDTO;
+import com.K_oin.Koin.DTO.commentDTOs.ReplyCommentDetailDTO;
 import com.K_oin.Koin.Service.boardServices.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,29 +21,29 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/createComment")
-    public ResponseEntity<ApiResponse<CommentDetailDTO>> createComment(@RequestBody CommentDetailDTO commentDetailDTO, Authentication authentication) {
+    public ResponseEntity<ApiResponse<CommentDTO>> createComment(@RequestBody CommentDTO commentDTO, Authentication authentication) {
 
         try {
-            commentService.createComment(commentDetailDTO, authentication.getName());
+            commentService.createComment(commentDTO, authentication.getName());
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse<>(false, null, "댓글 생성 실패: " + e.getMessage()));
         }
 
-        return ResponseEntity.ok(new ApiResponse<>(true, commentDetailDTO, "댓글 생성 성공"));
+        return ResponseEntity.ok(new ApiResponse<>(true, commentDTO, "댓글 생성 성공"));
     }
 
     @PostMapping("/createReplyComment")
-    public ResponseEntity<ApiResponse<CommentDetailDTO>> createCommentReply(@RequestBody CommentDetailDTO commentDetailDTO, Authentication authentication) {
+    public ResponseEntity<ApiResponse<ReplyCommentDTO>> createCommentReply(@RequestBody ReplyCommentDTO replyCommentDTO, Authentication authentication) {
 
         try {
-            commentService.createReplyComment(commentDetailDTO, authentication.getName());
+            commentService.createReplyComment(replyCommentDTO, authentication.getName());
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse<>(false, null, "대댓글 생성 실패: " + e.getMessage()));
         }
 
-        return ResponseEntity.ok(new ApiResponse<>(true, commentDetailDTO, "대댓글 생성 성공"));
+        return ResponseEntity.ok(new ApiResponse<>(true, replyCommentDTO, "대댓글 생성 성공"));
     }
 
     @PostMapping("/CommentLike/{commentId}")
@@ -72,9 +75,9 @@ public class CommentController {
     }
 
     @GetMapping("/replyComment/{commentId}")
-    public ResponseEntity<ApiResponse<List<CommentDetailDTO>>> getCommentReply(@PathVariable Long commentId) {
+    public ResponseEntity<ApiResponse<List<ReplyCommentDetailDTO>>> getCommentReply(@PathVariable Long commentId) {
 
-        List<CommentDetailDTO> replies;
+        List<ReplyCommentDetailDTO> replies;
 
         try {
             replies = commentService.getCommentReply(commentId);

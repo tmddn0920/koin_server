@@ -25,7 +25,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     ORDER BY (SELECT COUNT(l) FROM BoardLike l WHERE l.board = b) DESC,
              b.createdAt DESC
     """)
-    @EntityGraph(attributePaths = {"author"})
+    @EntityGraph(attributePaths = {"author", "likes", "comments"})
     Page<Board> findAllByBoardTypeOrderByLikesDesc(BoardType boardType, Pageable pageable);
 
     @EntityGraph(attributePaths = {"author", "likes", "comments", "comments.author"})

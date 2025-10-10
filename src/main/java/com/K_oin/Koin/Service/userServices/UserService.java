@@ -1,6 +1,7 @@
 package com.K_oin.Koin.Service.userServices;
 
 import com.K_oin.Koin.DTO.userDTOs.UserDTO;
+import com.K_oin.Koin.DTO.userDTOs.UserUpdateProfileDTO;
 import com.K_oin.Koin.Entitiy.UserEntity.User;
 import com.K_oin.Koin.EnumData.Nationality;
 import com.K_oin.Koin.EnumData.Role;
@@ -115,21 +116,21 @@ public class UserService {
         return taken;
     }
 
-    public void updateProfile(UserDTO userDTO, String name) {
+    public void updateProfile(UserUpdateProfileDTO userUpdateProfileDTO, String name) {
         User user = userRepository.findByUsername(name)
                 .orElseThrow(() -> {
                     log.warn("프로필 수정 실패 - 존재하지 않는 사용자: {}", name);
                     return new RuntimeException("사용자 없음");
                 });
 
-        if (userDTO.getNickname() != null && !userDTO.getNickname().isBlank()) {
-            user.setNickname(userDTO.getNickname());
+        if (userUpdateProfileDTO.getNickname() != null && !userUpdateProfileDTO.getNickname().isBlank()) {
+            user.setNickname(userUpdateProfileDTO.getNickname());
         }
-        if (userDTO.getBirthDate() != null) {
-            user.setBirthDate(userDTO.getBirthDate());
+        if (userUpdateProfileDTO.getBirthDate() != null) {
+            user.setBirthDate(userUpdateProfileDTO.getBirthDate());
         }
-        if (userDTO.getNationality() != null) {
-            user.setNationality(Nationality.valueOf(userDTO.getNationality()));
+        if (userUpdateProfileDTO.getNationality() != null) {
+            user.setNationality(Nationality.valueOf(userUpdateProfileDTO.getNationality()));
         }
 
         userRepository.save(user);

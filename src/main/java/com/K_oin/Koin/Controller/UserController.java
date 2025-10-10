@@ -1,9 +1,12 @@
 package com.K_oin.Koin.Controller;
 
 import com.K_oin.Koin.DTO.ApiResponse;
+import com.K_oin.Koin.DTO.userDTOs.UserChangePassWordDTO;
 import com.K_oin.Koin.DTO.userDTOs.UserDTO;
+import com.K_oin.Koin.DTO.userDTOs.UserUpdateProfileDTO;
 import com.K_oin.Koin.Entitiy.UserEntity.User;
 import com.K_oin.Koin.Service.userServices.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,8 +36,11 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "내 프로필 조회", description = "현재 로그인한 유저의 프로필 정보를 반환합니다.")
     @GetMapping("/MyProfile")
-    public ResponseEntity<?> getMyProfile(Authentication authentication){
+    public ResponseEntity<?> getMyProfile(
+            @Parameter(description = "Spring Security 인증 객체", hidden = true)
+            Authentication authentication){
         Optional<UserDTO> optionalUser = userService.getProfile(authentication.getName());
 
         return optionalUser
@@ -47,9 +53,9 @@ public class UserController {
     }
 
     @PostMapping("/ChangePassword")
-    public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO, Authentication authentication){
+    public ResponseEntity<?> changePassword(@RequestBody UserChangePassWordDTO userChangePassWordDTO, Authentication authentication){
         try {
-            Optional<Boolean> result = userService.changePassword(authentication.getName(), userDTO.getPassword());
+            Optional<Boolean> result = userService.changePassword(authentication.getName(), userChangePassWordDTO.getNewPassword());
             if (result.isPresent() && result.get()) {
                 return ResponseEntity.ok(Map.of("success", true));
             }
@@ -93,16 +99,16 @@ public class UserController {
     }
 
     @PostMapping("/UpdateProfile")
-    public ResponseEntity<ApiResponse<UserDTO>> updateProfile(@RequestBody UserDTO userDTO, Authentication authentication){
+    public ResponseEntity<ApiResponse<UserUpdateProfileDTO>> updateProfile(@RequestBody UserUpdateProfileDTO userUpdateProfileDTO, Authentication authentication){
 
         try {
-            userService.updateProfile(userDTO, authentication.getName());
+            userService.updateProfile(userUpdateProfileDTO, authentication.getName());
         } catch (Exception e) {
             return ResponseEntity.badRequest()
-                    .body(new ApiResponse<>(false, userDTO, e.getMessage()));
+                    .body(new ApiResponse<>(false, userUpdateProfileDTO, e.getMessage()));
         }
 
         String message = "성공적으로" + authentication.getName() + "업데이트 하였습니다.";
-        return ResponseEntity.ok(new ApiResponse<>(true, userDTO, message));
+        return ResponseEntity.ok(new ApiResponse<>(true, userUpdateProfileDTO, message));
     }
 }

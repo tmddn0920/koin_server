@@ -1,5 +1,6 @@
 package com.K_oin.Koin.DTO.boardDTOs;
 
+import com.K_oin.Koin.DTO.userDTOs.BoardAuthorDTO;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,5 +15,5 @@ public class BoardSummaryDTO {
     private LocalDateTime createdAt; // 생성일
     private int likeCount;        // 좋아요 수
     private int commentCount;     // 댓글 수
-    private String authorNationality; // 작성자 국적
+    private BoardAuthorDTO boardAuthorDTO;
 }

@@ -1,6 +1,9 @@
 package com.K_oin.Koin.Service.boardServices;
 
+import com.K_oin.Koin.DTO.commentDTOs.CommentDTO;
 import com.K_oin.Koin.DTO.commentDTOs.CommentDetailDTO;
+import com.K_oin.Koin.DTO.commentDTOs.ReplyCommentDTO;
+import com.K_oin.Koin.DTO.commentDTOs.ReplyCommentDetailDTO;
 import com.K_oin.Koin.DTO.userDTOs.BoardAuthorDTO;
 import com.K_oin.Koin.Entitiy.BoardEntity.*;
 import com.K_oin.Koin.Entitiy.BoardEntity.Likes.BoardCommentLike;
@@ -29,12 +32,12 @@ public class CommentService {
     private final BoardCommentLikeRepository boardCommentLikeRepository;
     private final CommentReplyLikeRepository commentReplyLikeRepository;
 
-    public void createComment(CommentDetailDTO commentDetailDTO, String userName) {
+    public void createComment(CommentDTO commentDTO, String userName) {
         var user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + userName));
 
-        Board board = boardRepository.findById(commentDetailDTO.getBoardId())
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다: " + commentDetailDTO.getBoardId()));
+        Board board = boardRepository.findById(commentDTO.getBoardId())
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다: " + commentDTO.getBoardId()));
 
         BoardComment comment;
 
@@ -42,9 +45,9 @@ public class CommentService {
             comment = BoardComment.builder()
                     .board(board)
                     .author(user)
-                    .content(commentDetailDTO.getBody())
+                    .content(commentDTO.getBody())
                     .createdAt(LocalDateTime.now())
-                    .anonymous(commentDetailDTO.isAnonymous()) // 기본값 설정, 필요에 따라 DTO에 추가 가능
+                    .anonymous(commentDTO.isAnonymous()) // 기본값 설정, 필요에 따라 DTO에 추가 가능
                     .build();
 
             commentRepository.save(comment);
@@ -56,12 +59,12 @@ public class CommentService {
 
     }
 
-    public void createReplyComment(CommentDetailDTO commentDetailDTO, String userName) {
+    public void createReplyComment(ReplyCommentDTO replyCommentDTO, String userName) {
         var user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + userName));
 
-        BoardComment boardComment = commentRepository.findById(commentDetailDTO.getCommentId())
-                .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다: " + commentDetailDTO.getCommentId()));
+        BoardComment boardComment = commentRepository.findById(replyCommentDTO.getCommentId())
+                .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다: " + replyCommentDTO.getCommentId()));
 
         CommentReply commentReply;
 
@@ -69,9 +72,9 @@ public class CommentService {
             commentReply = CommentReply.builder()
                     .parentComment(boardComment)
                     .author(user)
-                    .content(commentDetailDTO.getBody())
+                    .content(replyCommentDTO.getBody())
                     .createdAt(LocalDateTime.now())
-                    .anonymous(commentDetailDTO.isAnonymous()) // 기본값 설정, 필요에 따라 DTO에 추가 가능
+                    .anonymous(replyCommentDTO.isAnonymous()) // 기본값 설정, 필요에 따라 DTO에 추가 가능
                     .build();
 
             commentReplyRepository.save(commentReply);
@@ -82,8 +85,8 @@ public class CommentService {
         }
     }
 
-    public List<CommentDetailDTO> getCommentReply(Long commentId) {
-        BoardComment comment = commentRepository.findById(commentId)
+    public List<ReplyCommentDetailDTO> getCommentReply(Long commentId) {
+        BoardComment comment = commentRepository.findWithRepliesAndLikesByCommentId(commentId)
                 .orElseThrow(() -> new RuntimeException("댓글이 존재하지 않습니다 댓글id: " + commentId));
 
         return comment.getReplies().stream()
@@ -98,11 +101,14 @@ public class CommentService {
                                 .build();
                     }
 
-                    return CommentDetailDTO.builder()
+                    return ReplyCommentDetailDTO.builder()
+                            .commentId(comment.getCommentId())
                             .replyCommentId(reply.getCommentReplyId())
                             .author(authorDTO)
                             .body(reply.getContent())
+                            .anonymous(reply.isAnonymous())
                             .createdDate(reply.getCreatedAt())
+                            .likeCount(reply.getLikes().size())
                             .build();
                 })
                 .toList();

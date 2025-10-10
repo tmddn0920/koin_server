@@ -8,8 +8,9 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class CommentDetailDTO {
+public class ReplyCommentDetailDTO {
     private Long commentId;
+    private Long replyCommentId;
     private LocalDateTime createdDate;
     private BoardAuthorDTO author;
     private boolean anonymous;

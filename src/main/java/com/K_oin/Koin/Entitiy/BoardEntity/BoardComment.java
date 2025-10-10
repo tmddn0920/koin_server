@@ -1,5 +1,6 @@
 package com.K_oin.Koin.Entitiy.BoardEntity;
 
+import com.K_oin.Koin.Entitiy.BoardEntity.Likes.BoardCommentLike;
 import com.K_oin.Koin.Entitiy.UserEntity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +8,9 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Koin_BoardCommentTable")
@@ -15,7 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"board", "replies"})
+@EqualsAndHashCode(of = "commentId")
+@ToString(exclude = {"board", "author", "replies", "likes"})
 public class BoardComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +44,9 @@ public class BoardComment {
     private boolean anonymous; // 익명 댓글 여부
 
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommentReply> replies = new ArrayList<>();
+    @OrderBy("createdAt ASC")
+    private Set<CommentReply> replies = new HashSet<>();
 
+    @OneToMany(mappedBy = "boardComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<BoardCommentLike> likes = new HashSet<>();
 }

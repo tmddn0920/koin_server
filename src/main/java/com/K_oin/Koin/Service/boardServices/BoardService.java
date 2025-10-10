@@ -49,17 +49,29 @@ public class BoardService {
             }
 
             return boards.getContent().stream()
-                    .map(board -> BoardSummaryDTO.builder()
+                    .map(board -> {
+                        BoardAuthorDTO authorDTO = null;
+
+                        // 익명 게시글이 아닐 경우 작성자 정보 세팅
+                        if (!board.isAnonymous()) {
+                            authorDTO = BoardAuthorDTO.builder()
+                                    .nickname(board.getAuthor().getNickname())
+                                    .nationality(board.getAuthor().getNationality().name())
+                                    .build();
+                        }
+
+                        return BoardSummaryDTO.builder()
                             .boardId(board.getBoardId())
                             .title(board.getTitle())
-                            .authorNationality(board.getAuthor().getNationality().name())
+                            .boardAuthorDTO(authorDTO)
                             .preview(board.getBody().length() > 100
                                     ? board.getBody().substring(0, 100) + "..."
                                     : board.getBody())
                             .likeCount(board.getLikes().size())
                             .commentCount(board.getComments().size())
                             .createdAt(board.getCreatedAt())
-                            .build())
+                            .build();
+                    })
                     .toList();
 
         } catch (Exception e) {
@@ -112,6 +124,7 @@ public class BoardService {
                 .boardAuthorDTO(boardAuthorDTO)
                 .createdAt(board.getCreatedAt())
                 .likeCount(board.getLikes().size())
+                .anonymous(board.isAnonymous())
                 .commentCount(board.getComments().size())
                 .comments(board.getComments().stream()
                         .map(comment -> {
@@ -129,6 +142,8 @@ public class BoardService {
                                     .commentId(comment.getCommentId())
                                     .author(commentAuthorDTO)
                                     .body(comment.getContent())
+                                    .likeCount(comment.getLikes().size())
+                                    .anonymous(comment.isAnonymous())
                                     .createdDate(comment.getCreatedAt())
                                     .build();
                         })
